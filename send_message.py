@@ -14,7 +14,7 @@ def formatPayload(gamesDict : dict) -> dict:
     output = {}
     # output['channel'] = os.getenv('SLACK_CHANNEL_PROD')
     output['channel'] = os.getenv('SLACK_CHANNEL_TEST')
-    blocks = []
+    blocks = [{"type": "context","elements": [{"type": "plain_text","text": "All times local.","emoji": True}]}]
     blockDict = {}
     blockDict['type'] = 'section'
     fields = []
@@ -22,7 +22,7 @@ def formatPayload(gamesDict : dict) -> dict:
         fields.append({
             'type': 'mrkdwn',
             # "<!date^1392734382^{time}|Posted 2014-02-18 6:39:42 AM PST>"
-            'text': f'*<!date^{gamesDict[gameKey][2]}^' + '{time} (local)' + f'|{gamesDict[gameKey][2]}>*\n\t{gamesDict[gameKey][0]}\n\t{gamesDict[gameKey][1]}\n'
+            'text': f'*<!date^{gamesDict[gameKey][2]}^' + '{time}' + f'|{gamesDict[gameKey][2]}>*\n\t{gamesDict[gameKey][0]}\n\t{gamesDict[gameKey][1]}\n'
             })
     blockDict['fields'] = fields
     blocks.append(blockDict)
@@ -33,6 +33,10 @@ def formatPayload(gamesDict : dict) -> dict:
 ##
 ## Splits the list of games into chunks that are allowed to fit into Slack block
 ##  sections (currently set at limit of 10). Adds in reverse using pop() method.
+##
+# TODO: We don't need to do this, each section can only hold 10 items but each 
+#       message can hold many sections. Remove this and break apart the list of
+#       games in the payload prep section instead.
 def chunkDict(inputDict : dict) -> dict:
     MAX_SIZE = 10 # limit is 10 parts per section
     outputList = []
