@@ -2,6 +2,9 @@ from crawlpage import GetDate, GetToday, prettyPrint
 import requests, json, os, datetime
 
 
+DEBUG = 0
+MARCH_MADNESS = 0
+
 ##
 ## Builds each section-block by adding each game. Formats the time from UTC
 ##  timestamp and puts it into Slack-variable regex to display per users'
@@ -12,9 +15,16 @@ import requests, json, os, datetime
 ##       Stanford
 def formatPayload(gamesDict : dict) -> dict:
     output = {}
-    # output['channel'] = os.getenv('SLACK_CHANNEL_PROD')
-    output['channel'] = os.getenv('SLACK_CHANNEL_TEST')
-    blocks = [{"type": "context","elements": [{"type": "plain_text","text": "All times local.","emoji": True}]}]
+    if DEBUG:
+        output['channel'] = os.getenv('SLACK_CHANNEL_TEST')
+    else:
+        output['channel'] = os.getenv('SLACK_CHANNEL_PROD')
+
+    blocks = []
+    blocks.append({"type": "context","elements": [{"type": "plain_text","text": "All times local.","emoji": True}]})
+    if MARCH_MADNESS: 
+        # march madness header
+        blocks.append({"type": "section","text": {"type": "mrkdwn","text": ":party-porg: :party-slug: :partyotter: *March Madness* :partyotter: :party-slug: :party-porg:\n[ <https://www.ncaa.com/brackets/basketball-women/d1/2025|Bracket> ]"}})
     blockDict = {}
     blockDict['type'] = 'section'
     fields = []
@@ -38,7 +48,7 @@ def formatPayload(gamesDict : dict) -> dict:
 #       message can hold many sections. Remove this and break apart the list of
 #       games in the payload prep section instead.
 def chunkDict(inputDict : dict) -> dict:
-    MAX_SIZE = 10 # limit is 10 parts per section
+    MAX_SIZE = 8 # limit is 10 parts per section
     outputList = []
     dictPieces = len(inputDict.keys()) // MAX_SIZE
 
@@ -62,8 +72,10 @@ def chunkDict(inputDict : dict) -> dict:
 ## Collect games and send a message to Slack
 ##
 def main():
-    gamesDict = GetDate(datetime.datetime.strptime('2024/12/15', '%Y/%m/%d'))
-    # gamesDict = GetToday()
+    if DEBUG :
+        gamesDict = GetDate(datetime.datetime.strptime('2025/03/19', '%Y/%m/%d'))
+    else :
+        gamesDict = GetToday()
     prettyPrint(gamesDict) # just for logging I guess?
     if len(gamesDict.keys()) == 0:
         print("No games today")

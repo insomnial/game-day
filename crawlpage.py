@@ -8,7 +8,8 @@ from datetime import datetime, timezone, timedelta, tzinfo
 BASE_URL = 'https://www.ncaa.com/scoreboard/basketball-women'
 # filter options so we pull a reasonable amount of games
 division = 'd1'
-filter = 'top-25'
+# filter = 'top-25' # regular season
+filter = 'all-conf' # march madness
 
 
 ##
