@@ -3,7 +3,7 @@ import requests, json, os, datetime
 
 
 DEBUG = 0
-MARCH_MADNESS = 0
+MARCH_MADNESS = 1
 
 ##
 ## Builds each section-block by adding each game. Formats the time from UTC
