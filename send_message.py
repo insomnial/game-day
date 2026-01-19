@@ -24,7 +24,8 @@ def formatPayload(gamesDict : dict) -> dict:
     blocks.append({"type": "context","elements": [{"type": "plain_text","text": "All times local.","emoji": True}]})
     if MARCH_MADNESS: 
         # march madness header
-        blocks.append({"type": "section","text": {"type": "mrkdwn","text": ":party-porg: :party-slug: :partyotter: *March Madness* :partyotter: :party-slug: :party-porg:\n[ <https://www.ncaa.com/brackets/basketball-women/d1/2025|Bracket> ]"}})
+        blocks.append({"type": "section","text": {"type": "mrkdwn","text": ":party-porg: :party-slug: :partyotter: *March Madness* :partyotter: :party-slug: :party-porg:"}})
+        blocks.append({"type": "section","text": {"type": "mrkdwn","text": "[ <https://www.ncaa.com/brackets/basketball-women/d1/2025|Bracket> ] [ <https://fantasy.espn.com/games/tournament-challenge-bracket-women-2025/group?id=69a29d96-97bf-43b8-91ed-de5a30560f15|Slacking Off WBB Challenge> ]"}})
     blockDict = {}
     blockDict['type'] = 'section'
     fields = []
