@@ -1,0 +1,240 @@
+{
+	"blocks": [
+		{
+			"type": "table",
+			"rows": [
+				[
+					{
+						"type": "rich_text",
+						"elements": [
+							{
+								"type": "rich_text_section",
+								"elements": [
+									{
+										"type": "text",
+										"text": "Rank",
+										"style": {
+											"bold": true
+										}
+									}
+								]
+							}
+						]
+					},
+					{
+						"type": "rich_text",
+						"elements": [
+							{
+								"type": "rich_text_section",
+								"elements": [
+									{
+										"type": "text",
+										"text": "School",
+										"style": {
+											"bold": true
+										}
+									}
+								]
+							}
+						]
+					},
+					{
+						"type": "rich_text",
+						"elements": [
+							{
+								"type": "rich_text_section",
+								"elements": [
+									{
+										"type": "text",
+										"text": "Record",
+										"style": {
+											"bold": true
+										}
+									}
+								]
+							}
+						]
+					},
+					{
+						"type": "rich_text",
+						"elements": [
+							{
+								"type": "rich_text_section",
+								"elements": [
+									{
+										"type": "text",
+										"text": "Points",
+										"style": {
+											"bold": true
+										}
+									}
+								]
+							}
+						]
+					},
+					{
+						"type": "rich_text",
+						"elements": [
+							{
+								"type": "rich_text_section",
+								"elements": [
+									{
+										"type": "text",
+										"text": "Previous",
+										"style": {
+											"bold": true
+										}
+									}
+								]
+							}
+						]
+					}
+				],
+				[
+					{
+						"type": "rich_text",
+						"elements": [
+							{
+								"type": "rich_text_section",
+								"elements": [
+									{
+										"type": "text",
+										"text": "1"
+									}
+								]
+							}
+						]
+					},
+					{
+						"type": "rich_text",
+						"elements": [
+							{
+								"type": "rich_text_section",
+								"elements": [
+									{
+										"type": "text",
+										"text": "UConn"
+									}
+								]
+							}
+						]
+					},
+					{
+						"type": "rich_text",
+						"elements": [
+							{
+								"type": "rich_text_section",
+								"elements": [
+									{
+										"type": "text",
+										"text": "17-0"
+									}
+								]
+							}
+						]
+					},
+					{
+						"type": "rich_text",
+						"elements": [
+							{
+								"type": "rich_text_section",
+								"elements": [
+									{
+										"type": "text",
+										"text": "800"
+									}
+								]
+							}
+						]
+					},
+					{
+						"type": "rich_text",
+						"elements": [
+							{
+								"type": "rich_text_section",
+								"elements": [
+									{
+										"type": "text",
+										"text": "1"
+									}
+								]
+							}
+						]
+					}
+				],
+				[
+					{
+						"type": "rich_text",
+						"elements": [
+							{
+								"type": "rich_text_section",
+								"elements": [
+									{
+										"type": "text",
+										"text": "2"
+									}
+								]
+							}
+						]
+					},
+					{
+						"type": "rich_text",
+						"elements": [
+							{
+								"type": "rich_text_section",
+								"elements": [
+									{
+										"type": "text",
+										"text": "South Carolina"
+									}
+								]
+							}
+						]
+					},
+					{
+						"type": "rich_text",
+						"elements": [
+							{
+								"type": "rich_text_section",
+								"elements": [
+									{
+										"type": "text",
+										"text": "17-1"
+									}
+								]
+							}
+						]
+					},
+					{
+						"type": "rich_text",
+						"elements": [
+							{
+								"type": "rich_text_section",
+								"elements": [
+									{
+										"type": "text",
+										"text": "748"
+									}
+								]
+							}
+						]
+					},
+					{
+						"type": "rich_text",
+						"elements": [
+							{
+								"type": "rich_text_section",
+								"elements": [
+									{
+										"type": "text",
+										"text": "3"
+									}
+								]
+							}
+						]
+					}
+				]
+			]
+		}
+	]
+}
