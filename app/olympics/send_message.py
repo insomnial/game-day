@@ -19,7 +19,7 @@ def formatPayload(groupDict : dict) -> dict:
         output['channel'] = os.getenv('SLACK_CHANNEL_OLYMPICS')
 
     blocks = []
-    blocks.append({"type": "header","text": {"type": "plain_text","text": "Olympic Events Today", "emoji": True}})
+    blocks.append({"type": "header","text": {"type": "plain_text","text": "Olympic Events Upcoming", "emoji": True}})
     blocks.append({"type": "context","elements": [{"type": "plain_text","text": "All times local.","emoji": True}]})
     blockDict = {}
     blockDict['type'] = 'section'
