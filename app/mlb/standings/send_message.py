@@ -1,6 +1,7 @@
-import requests, json, os, datetime, os
+import requests, json, os
 from dotenv import load_dotenv
 from pathlib import Path
+from time import sleep
 
 from main import get_division_standings
 
@@ -17,20 +18,12 @@ slack_channel_test = os.getenv('SLACK_CHANNEL_TEST')
 slack_channel_prod = os.getenv('SLACK_CHANNEL_PROD')
 
 #region DEBUG
-DEBUG = False
+DEBUG = True
 
 
 ###############################################################################
 #region Internal functions
 ###############################################################################
-##
-## Builds each section-block by adding each game. Formats the time from UTC
-##  timestamp and puts it into Slack-variable regex to display per users'
-##  set timezone.
-## Ex
-##   05:00 PM
-##       Berkeley
-##       Stanford
 def formatPayload(title: str, standings: dict) -> dict:
     output = {}
     if DEBUG:
@@ -72,6 +65,7 @@ def main():
     ]
 
     for division in division_list:
+        sleep(5)
         standings = get_division_standings(division[0], division[1]) # (League, Region)
         print(standings) # logging
 
@@ -84,7 +78,6 @@ def main():
         headers = {'Authorization': f'Bearer {token}', 'Content-type': 'application/json; charset=utf-8'}
         try:
             req = requests.post(url=url, headers=headers, data=json.dumps(payload))
-            print(json.loads(req.content))
         except Exception as ex:
             print(ex)
 

@@ -39,6 +39,7 @@ def _request_full_standings() -> dict:
 
 # Helper function to pull out the division searched for
 def _get_division_from_standings(standings : dict, leagueName : str, divisionName : str) -> dict:
+    # print(standings)
     for league in standings['league']['season']['leagues']:
         if league['name'] == leagueName:
             for division in league['divisions']:
