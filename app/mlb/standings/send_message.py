@@ -1,4 +1,4 @@
-import requests, json, os
+import requests, json, os, argparse
 from dotenv import load_dotenv
 from pathlib import Path
 from time import sleep
@@ -18,7 +18,11 @@ slack_channel_test = os.getenv('SLACK_CHANNEL_TEST')
 slack_channel_prod = os.getenv('SLACK_CHANNEL_PROD')
 
 #region DEBUG
-DEBUG = True
+parser = argparse.ArgumentParser()
+parser.add_argument('--live', action='store_true', help='Send to live channel')
+args = parser.parse_args()
+
+DEBUG = not args.live
 
 
 ###############################################################################

@@ -8,5 +8,5 @@ date > send_message_mlb.log
 
 cd /home/kurt/git/game-day/app/mlb/standings || exit
 source .venv/bin/activate
-python send_message.py >> send_message_mlb.log 2>&1
+python send_message.py --live >> send_message_mlb.log 2>&1
 deactivate
