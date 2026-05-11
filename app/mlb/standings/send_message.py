@@ -28,7 +28,7 @@ DEBUG = not args.live
 ###############################################################################
 #region Internal functions
 ###############################################################################
-def formatPayload(title: str, standings: dict) -> dict:
+def formatPayload(standings: dict) -> dict:
     output = {}
     if DEBUG:
         output["channel"] = f"{slack_channel_test}"
@@ -36,21 +36,28 @@ def formatPayload(title: str, standings: dict) -> dict:
         output["channel"] = f"{slack_channel_prod}"
 
     blocks = []
-    blocks.append({"type": "context","elements": [{"type": "plain_text","text": title,"emoji": True}]})
+    standings = standings[next(iter(standings))]
+    blocks.append({"type": "context","elements": [{"type": "plain_text","text": f'{standings['div_name']}',"emoji": True}]})
     
-    for rank in standings.keys():
-        rank_num = rank
-        rank_team = standings[rank]
-        followed_teams = ['Giants', 'Mets']
-        for team in followed_teams:
-             if team in rank_team:
-                 rank_team = f'{rank_team}\t:star:'
+    teams = standings['teams']
+    for team in teams:
+        rank_num = team['div_rank']
+        rank_team = team['name']
+        rank_wins = team['w']
+        rank_losses = team['l']
+        rank_gb = team['gb']
+        rank_elim_num = team['elim_num']
+        followed_teams = ['San Francisco Giants', 'New York Mets']
+        starred = ''
+        if rank_team in followed_teams:
+            starred = ':star:'
         blockDict = {}
         blockDict["type"] = "section"
         fields = []
         fields.append({
             "type": "mrkdwn",
-            "text": f'{rank_num}\t{rank_team}'
+            "text": f'{rank_num}\t{rank_team} ({rank_wins}-{rank_losses})\t{starred}'
+            # "text": f'{rank_num}\t{rank_team}\t{rank_wins}-{rank_losses}\tGB: {rank_gb}\tElim Num: {rank_elim_num}'
             })
         blockDict["fields"] = fields
         blocks.append(blockDict)
@@ -64,17 +71,16 @@ def formatPayload(title: str, standings: dict) -> dict:
 def main():
     # populate with divisions we care about (League, Region)
     division_list = [
-        ('National League', 'East'),
-        ('National League', 'West')
+        (104, 204), # NL East
+        (104, 203)  # NL West
     ]
 
     for division in division_list:
-        sleep(5)
-        standings = get_division_standings(division[0], division[1]) # (League, Region)
+        standings = get_division_standings(division[0], division[1]) # (league, division)
         print(standings) # logging
 
         # format the payload for Slack
-        payload = formatPayload(title = f'Standings for {division[0]} {division[1]}', standings=standings)
+        payload = formatPayload(standings=standings)
         print(payload) # logging
 
         token = os.getenv('SLACK_BOT_TOKEN')
