@@ -168,3 +168,6 @@ credentials.py
 
 # vs code artifacts
 .vscode/
+
+# nwsl hash file
+app/nwsl/standings/hash.txt
