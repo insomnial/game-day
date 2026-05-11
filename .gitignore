@@ -169,5 +169,6 @@ credentials.py
 # vs code artifacts
 .vscode/
 
-# nwsl hash file
+# standings hash files
 app/nwsl/standings/hash.txt
+app/wnba/standings/hash.txt
