@@ -15,3 +15,14 @@ Now supports sending to debug channels with one global switch.
 ## 2026 Olympics
 ### Upcoming Events
 Posts the upcoming day's events.
+
+## WNBA
+### Standings
+Conference standings updated to the day.
+
+### Scheduled games today
+Today's games scheduled to send to Slack an hour ahead of time.
+
+## MLB
+### Standings
+Division standings, currently set for NL East and NL West.
