@@ -41,9 +41,10 @@ def get_games() -> dict:
         event_timestamp = int(event_datetime.timestamp())
 
         game_list[game['id']] = {
-            'name': game['date'],
+            'name': game['name'],
             'timestamp': event_timestamp,
-            'status': game['status']
+            'status': game['status'],
+            'links': game['links']
         }
 
     return game_list
