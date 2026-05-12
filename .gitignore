@@ -172,3 +172,4 @@ credentials.py
 # standings hash files
 app/nwsl/standings/hash.txt
 app/wnba/standings/hash.txt
+app/wnba/games/hash.txt
