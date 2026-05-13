@@ -38,11 +38,12 @@ def _get_standings_conference(json_blob) -> dict:
     current_rank = 1
     for team in json_blob:
         stats = _populate_stats(team['stats'])
-        team_name = team['team']['name']
+        team_name = f'{team['team']['location']} {team['team']['name']}'
         clean_standings[current_rank] = {
             'name': team_name, 
             'overall': stats['overall'], 
-            'rank': current_rank
+            'rank': current_rank,
+            'stats': stats
         }
         current_rank += 1
 
