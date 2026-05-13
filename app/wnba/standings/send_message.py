@@ -45,22 +45,6 @@ def formatPayload(conference: str,standings: dict) -> dict:
     blocks = []
     blocks.append({'type': 'context','elements': [{'type': 'plain_text','text': f'WNBA {conference} Standings','emoji': True}]})
     
-    # # prints strings with inconsistent tabs as spaces
-    # for team in standings.values():
-    #     followed_teams = ['Valkyries']
-    #     starred = ''
-    #     if team['name'] in followed_teams:
-    #         starred = ':star:'
-    #     blockDict = {}
-    #     blockDict['type'] = 'section'
-    #     fields = []
-    #     fields.append({
-    #         'type': 'mrkdwn',
-    #         'text': f'{int(team['rank'])}\t{team['name']}\t({team['overall']})\t{starred}'
-    #     })
-    #     blockDict['fields'] = fields
-    #     blocks.append(blockDict)
-
     # print as a table with consistent spacing but cell borders
     blockDict = {'type':'table','column_settings':[{'align':'center'},{'align':'left'},{'align':'right'},{'align':'right'}]}
     rowsList=[[{'type':'rich_text','elements':[{'type':'rich_text_section','elements':[{'type':'text','text':'Rank'}]}]},{
