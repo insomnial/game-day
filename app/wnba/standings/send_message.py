@@ -11,7 +11,7 @@ from hashlib import md5
 #region Load variables
 ###############################################################################
 # environment
-env_path = Path(__file__).resolve().parent / ".env"
+env_path = Path(__file__).resolve().parent / '.env'
 load_dotenv(dotenv_path=env_path)
 api_key = os.getenv('API_KEY')
 slack_token = os.getenv('SLACK_BOT_TOKEN')
@@ -35,31 +35,109 @@ DEBUG = not args.live
 ###############################################################################
 #region Internal functions
 ###############################################################################
-def formatPayload(standings: dict) -> dict:
+def formatPayload(conference: str,standings: dict) -> dict:
     output = {}
     if DEBUG:
-        output["channel"] = f"{slack_channel_test}"
+        output['channel'] = f'{slack_channel_test}'
     else:
-        output["channel"] = f"{slack_channel_prod}"
+        output['channel'] = f'{slack_channel_prod}'
 
     blocks = []
-    blocks.append({"type": "context","elements": [{"type": "plain_text","text": 'WNBA Western Conference Standings',"emoji": True}]})
+    blocks.append({'type': 'context','elements': [{'type': 'plain_text','text': f'WNBA {conference} Standings','emoji': True}]})
     
+    # # prints strings with inconsistent tabs as spaces
+    # for team in standings.values():
+    #     followed_teams = ['Valkyries']
+    #     starred = ''
+    #     if team['name'] in followed_teams:
+    #         starred = ':star:'
+    #     blockDict = {}
+    #     blockDict['type'] = 'section'
+    #     fields = []
+    #     fields.append({
+    #         'type': 'mrkdwn',
+    #         'text': f'{int(team['rank'])}\t{team['name']}\t({team['overall']})\t{starred}'
+    #     })
+    #     blockDict['fields'] = fields
+    #     blocks.append(blockDict)
+
+    # print as a table with consistent spacing but cell borders
+    blockDict = {'type':'table','column_settings':[{'align':'center'},{'align':'left'},{'align':'right'},{'align':'right'}]}
+    rowsList=[[{'type':'rich_text','elements':[{'type':'rich_text_section','elements':[{'type':'text','text':'Rank'}]}]},{
+        'type':'rich_text','elements':[{'type':'rich_text_section','elements':[{'type':'text','text':'Team'}]}]},{'type':
+        'rich_text','elements':[{'type':'rich_text_section','elements':[{'type':'text','text':'Record'}]}]},{'type':
+        'rich_text','elements':[{'type':'rich_text_section','elements':[{'type':'text','text':'Last 10'}]}]}]] # rows are a list of lists
     for team in standings.values():
-        followed_teams = ['Valkyries']
+        row = [] # create a new row which is a list of dicts for each team
+        followed_teams = ['Golden State Valkyries']
         starred = ''
         if team['name'] in followed_teams:
-            starred = ':star:'
-        blockDict = {}
-        blockDict["type"] = "section"
-        fields = []
-        fields.append({
-            "type": "mrkdwn",
-            "text": f'{int(team['rank'])}\t{team['name']}\t({team['overall']})\t{starred}'
-        })
-        blockDict["fields"] = fields
-        blocks.append(blockDict)
-    output["blocks"] = blocks
+            team['name'] = f'-- {team['name']} --'
+
+        # we need one dict for each column of rank, team name, record, and streak
+        # COL rank
+        rowDict = {} # list of dicts for this row
+        rowDict['type'] = 'rich_text'
+        rowDict['elements'] = [
+            {
+                'type': 'rich_text_section',
+                'elements': [{
+                    'type': 'text',
+                    'text': f'{team['rank']}'
+                }]
+            }
+        ]
+        row.append(rowDict)
+
+        # COL team name
+        rowDict = {} # list of dicts for this row
+        rowDict['type'] = 'rich_text'
+        rowDict['elements'] = [
+            {
+                'type': 'rich_text_section',
+                'elements': [{
+                    'type': 'text',
+                    'text': f'{team['name']} {starred}'
+                }]
+            }
+        ]
+        row.append(rowDict)
+
+        # COL record
+        rowDict = {} # list of dicts for this row
+        rowDict['type'] = 'rich_text'
+        rowDict['elements'] = [
+            {
+                'type': 'rich_text_section',
+                'elements': [{
+                    'type': 'text',
+                    'text': f'{team['overall']}'
+                }]
+            }
+        ]
+        row.append(rowDict)
+
+        # COL streak
+        rowDict = {} # list of dicts for this row
+        rowDict['type'] = 'rich_text'
+        rowDict['elements'] = [
+            {
+                'type': 'rich_text_section',
+                'elements': [{
+                    'type': 'text',
+                    'text': f'({team['stats']['Last Ten Games']})'
+                }]
+            }
+        ]
+        row.append(rowDict)
+
+        rowsList.append(row)
+    blockDict['rows'] = rowsList
+    print(blockDict)
+
+    blocks.append(blockDict)
+
+    output['blocks'] = blocks
     return output
 
 
@@ -68,11 +146,10 @@ def formatPayload(standings: dict) -> dict:
 ###############################################################################
 def main():
     standings = get_standings()
-    standings = standings['Western Conference']
-    print(standings) # logging
+    print(f'Standings length: {len(standings)}') # logging
     version = '1.0.0'
     hash = md5(f'{str(standings)}{version}'.encode()).hexdigest()
-    if hash == CURRENT_HASH:
+    if not DEBUG and hash == CURRENT_HASH:
         print('No changes detected, exiting.')
         return
     else:
@@ -81,16 +158,18 @@ def main():
             f.write(hash)
 
     # format the payload for Slack
-    payload = formatPayload(standings=standings)
-    print(payload) # logging
+    for conference, standing in standings.items():
+        payload = formatPayload(conference = conference, standings=standing)
+        print(f'Standings for {conference} sending') # logging
 
-    token = os.getenv('SLACK_BOT_TOKEN')
-    url = 'https://slack.com/api/chat.postMessage'
-    headers = {'Authorization': f'Bearer {token}', 'Content-type': 'application/json; charset=utf-8'}
-    try:
-        req = requests.post(url=url, headers=headers, data=json.dumps(payload))
-    except Exception as ex:
-        print(ex)
+        token = os.getenv('SLACK_BOT_TOKEN')
+        url = 'https://slack.com/api/chat.postMessage'
+        headers = {'Authorization': f'Bearer {token}', 'Content-type': 'application/json; charset=utf-8'}
+        try:
+            req = requests.post(url=url, headers=headers, data=json.dumps(payload)).json()
+            print(f'Response {req['ok']}')
+        except Exception as ex:
+            print(ex)
 
 
 if __name__ == '__main__':
