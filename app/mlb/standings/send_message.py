@@ -39,29 +39,87 @@ def formatPayload(standings: dict) -> dict:
     standings = standings[next(iter(standings))]
     blocks.append({"type": "context","elements": [{"type": "plain_text","text": f'{standings['div_name']}',"emoji": True}]})
     
-    teams = standings['teams']
-    for team in teams:
-        rank_num = team['div_rank']
-        rank_team = team['name']
-        rank_wins = team['w']
-        rank_losses = team['l']
-        rank_gb = team['gb']
-        rank_elim_num = team['elim_num']
-        followed_teams = ['San Francisco Giants', 'New York Mets']
+    # print as a table with consistent spacing but cell borders
+    col1 = 'Division'
+    col2 = 'Team'
+    col3 = 'Record'
+    col4 = 'League'
+    blockDict = {'type':'table','column_settings':[{'align':'center'},{'align':'left'},{'align':'right'},{'align':'center'}]}
+    rowsList=[[{'type':'rich_text','elements':[{'type':'rich_text_section','elements':[{'type':'text','text':f'{col1}'}]}]},{
+        'type':'rich_text','elements':[{'type':'rich_text_section','elements':[{'type':'text','text':f'{col2}'}]}]},{'type':
+        'rich_text','elements':[{'type':'rich_text_section','elements':[{'type':'text','text':f'{col3}'}]}]},{'type':
+        'rich_text','elements':[{'type':'rich_text_section','elements':[{'type':'text','text':f'{col4}'}]}]}]] # rows are a list of lists
+    for team in standings['teams']:
+        row = [] # create a new row which is a list of dicts for each team
+        followed_teams = ['New York Mets', 'San Francisco Giants']
         starred = ''
-        if rank_team in followed_teams:
-            starred = ':star:'
-        blockDict = {}
-        blockDict["type"] = "section"
-        fields = []
-        fields.append({
-            "type": "mrkdwn",
-            "text": f'{rank_num}\t{rank_team} ({rank_wins}-{rank_losses})\t{starred}'
-            # "text": f'{rank_num}\t{rank_team}\t{rank_wins}-{rank_losses}\tGB: {rank_gb}\tElim Num: {rank_elim_num}'
-            })
-        blockDict["fields"] = fields
-        blocks.append(blockDict)
-    output["blocks"] = blocks
+        if team['name'] in followed_teams:
+            team['name'] = f'-- {team['name']} --'
+
+        # we need one dict for each column of rank, team name, record, and streak
+        # COL rank
+        rowDict = {} # list of dicts for this row
+        rowDict['type'] = 'rich_text'
+        rowDict['elements'] = [
+            {
+                'type': 'rich_text_section',
+                'elements': [{
+                    'type': 'text',
+                    'text': f'{team['div_rank']}'
+                }]
+            }
+        ]
+        row.append(rowDict)
+
+        # COL team name
+        rowDict = {} # list of dicts for this row
+        rowDict['type'] = 'rich_text'
+        rowDict['elements'] = [
+            {
+                'type': 'rich_text_section',
+                'elements': [{
+                    'type': 'text',
+                    'text': f'{team['name']} {starred}'
+                }]
+            }
+        ]
+        row.append(rowDict)
+
+        # COL record
+        rowDict = {} # list of dicts for this row
+        rowDict['type'] = 'rich_text'
+        rowDict['elements'] = [
+            {
+                'type': 'rich_text_section',
+                'elements': [{
+                    'type': 'text',
+                    'text': f'{team['w']} - {team['l']}'
+                }]
+            }
+        ]
+        row.append(rowDict)
+
+        # COL streak
+        rowDict = {} # list of dicts for this row
+        rowDict['type'] = 'rich_text'
+        rowDict['elements'] = [
+            {
+                'type': 'rich_text_section',
+                'elements': [{
+                    'type': 'text',
+                    'text': f'{team['league_rank']}'
+                }]
+            }
+        ]
+        row.append(rowDict)
+
+        rowsList.append(row)
+    blockDict['rows'] = rowsList
+    print(blockDict)
+
+    blocks.append(blockDict)
+
+    output['blocks'] = blocks
     return output
 
 
@@ -87,7 +145,8 @@ def main():
         url = 'https://slack.com/api/chat.postMessage'
         headers = {'Authorization': f'Bearer {token}', 'Content-type': 'application/json; charset=utf-8'}
         try:
-            req = requests.post(url=url, headers=headers, data=json.dumps(payload))
+            req = requests.post(url=url, headers=headers, data=json.dumps(payload)).json()
+            print(f'Response successful {req['ok']}')
         except Exception as ex:
             print(ex)
 
