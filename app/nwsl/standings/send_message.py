@@ -45,21 +45,88 @@ def formatPayload(standings: dict) -> dict:
     blocks = []
     blocks.append({"type": "context","elements": [{"type": "plain_text","text": 'NWSL Standings',"emoji": True}]})
     
+    # print as a table with consistent spacing but cell borders
+    col1 = 'Rank'
+    col2 = 'Team'
+    col3 = 'Points'
+    col4 = 'Record'
+    blockDict = {'type':'table','column_settings':[{'align':'center'},{'align':'left'},{'align':'right'},{'align':'right'}]}
+    rowsList=[[{'type':'rich_text','elements':[{'type':'rich_text_section','elements':[{'type':'text','text':f'{col1}'}]}]},{
+        'type':'rich_text','elements':[{'type':'rich_text_section','elements':[{'type':'text','text':f'{col2}'}]}]},{'type':
+        'rich_text','elements':[{'type':'rich_text_section','elements':[{'type':'text','text':f'{col3}'}]}]},{'type':
+        'rich_text','elements':[{'type':'rich_text_section','elements':[{'type':'text','text':f'{col4}'}]}]}]] # rows are a list of lists
     for team in standings.values():
-        followed_teams = ['Bay FC', 'Angel City FC']
+        row = [] # create a new row which is a list of dicts for each team
+        followed_teams = ['Bay FC']
         starred = ''
         if team['name'] in followed_teams:
-            starred = ':star:'
-        blockDict = {}
-        blockDict["type"] = "section"
-        fields = []
-        fields.append({
-            "type": "mrkdwn",
-            "text": f'{int(team['rank'])}\t{team['name']}\t{int(team['points'])}\t({team['overall']})\t{starred}'
-        })
-        blockDict["fields"] = fields
-        blocks.append(blockDict)
-    output["blocks"] = blocks
+            team['name'] = f'-- {team['name']} --'
+
+        # we need one dict for each column of rank, team name, record, and streak
+        # COL rank
+        rowDict = {} # list of dicts for this row
+        rowDict['type'] = 'rich_text'
+        rowDict['elements'] = [
+            {
+                'type': 'rich_text_section',
+                'elements': [{
+                    'type': 'text',
+                    'text': f'{int(team['rank'])}'
+                }]
+            }
+        ]
+        row.append(rowDict)
+
+        # COL team name
+        rowDict = {} # list of dicts for this row
+        rowDict['type'] = 'rich_text'
+        rowDict['elements'] = [
+            {
+                'type': 'rich_text_section',
+                'elements': [{
+                    'type': 'text',
+                    'text': f'{team['name']} {starred}'
+                }]
+            }
+        ]
+        row.append(rowDict)
+
+        # COL record
+        rowDict = {} # list of dicts for this row
+        rowDict['type'] = 'rich_text'
+        rowDict['elements'] = [
+            {
+                'type': 'rich_text_section',
+                'elements': [{
+                    'type': 'text',
+                    'text': f'{int(team['points'])}'
+                }]
+            }
+        ]
+        row.append(rowDict)
+
+        # COL streak
+        rowDict = {} # list of dicts for this row
+        rowDict['type'] = 'rich_text'
+        rowDict['elements'] = [
+            {
+                'type': 'rich_text_section',
+                'elements': [{
+                    'type': 'text',
+                    'text': f'({team['overall']})'
+                }]
+            }
+        ]
+        row.append(rowDict)
+
+        rowsList.append(row)
+    blockDict['rows'] = rowsList
+    print(blockDict)
+
+    blocks.append(blockDict)
+
+    output['blocks'] = blocks
+
     return output
 
 
@@ -71,7 +138,7 @@ def main():
     print(standings) # logging
     version = '1.0.0'
     hash = md5(f'{str(standings)}{version}'.encode()).hexdigest()
-    if hash == CURRENT_HASH:
+    if not DEBUG and hash == CURRENT_HASH:
         print('No changes detected, exiting.')
         return
     else:
