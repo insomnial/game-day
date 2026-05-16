@@ -9,14 +9,17 @@ from requests import get
 ###############################################################################
 # environment
 ENDPOINT = 'https://site.api.espn.com/apis/site/v2/sports/basketball/wnba/scoreboard'
+GAME_DIR = 'stack_game/'
 
 
 ###############################################################################
 #region Private functions
 ###############################################################################
 def _get_json_blob() -> dict:
+    date_string = datetime.now().strftime('%Y%m%d')
+    print(f'date: {date_string}')
     response_json = get(
-        url=ENDPOINT,
+        url=ENDPOINT + '?dates=' + date_string,
         headers={'Accept': 'application/json'}
     )
     return response_json.json()
@@ -28,7 +31,11 @@ def _get_json_blob() -> dict:
 # Takes the entire blob and returns a cleaned dict of ranking
 def get_games() -> dict:
     json_blob = _get_json_blob()
-    events = json_blob['events']
+    try:
+        events = json_blob['events']
+    except KeyError as e:
+        print(f"Key error: {e}")
+        exit()
 
     # strip down to what we want
     game_list = {}

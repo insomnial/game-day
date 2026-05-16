@@ -1,4 +1,4 @@
-import os, statsapi
+import os, statsapi, json
 from dotenv import load_dotenv
 from pathlib import Path
 
@@ -11,6 +11,7 @@ from requests import get
 # environment
 env_path = Path(__file__).resolve().parent / ".env"
 load_dotenv(dotenv_path=env_path)
+GAME_DIR = 'stack_game/'
 
 
 ###############################################################################
@@ -29,7 +30,8 @@ def get_current_game_data(team_id) -> dict:
                         headers = {"content-type":"application/json"}).json()
     pass
     try:
-        event_today = statsapi.schedule(team=team_id, sportId=1, include_series_status=True, date='05/12/2026')
+        event_today = statsapi.schedule(team=team_id, sportId=1, include_series_status=True, date='05/13/2026')
+        print(json.dumps(event_today, indent=4))        
         event_today = event_today[0]
         game_status = event_today['status']
         if game_status == 'In Progress':
@@ -47,7 +49,7 @@ def get_current_game_data(team_id) -> dict:
 def main():
 
     get_current_game_data('137')
-    get_current_game_data('121')
+    # get_current_game_data('121')
 
 
 # I forget this every effing time
