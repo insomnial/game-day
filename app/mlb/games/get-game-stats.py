@@ -18,42 +18,20 @@ GAME_DIR = 'stack_game/'
 ###############################################################################
 #region Private functions
 ###############################################################################
-def _get_team_data(team_id) -> dict:
-    # giants team_id = 137
-    # mets team_id = 121
-    # get team data
-    response_json = get(url=f'https://statsapi.mlb.com/api/v1/teams/{team_id}', 
-                        headers = {"content-type":"application/json"}).json()
-    return response_json
 
 
 ###############################################################################
 #region Public functions
 ###############################################################################
-def get_current_game_data(team_id, date_string=None) -> dict:
-    if date_string is None:
-        date_string = datetime.now().strftime("%m/%d/%Y")
-    try:
-        event_today = statsapi.schedule(team=team_id, sportId=1, include_series_status=True, date=date_string)
-    except Exception as e:
-        print("No remaining games for today.")
-        return {}
-    
-    # this is all debug data
-    for event in event_today:
-        # print(json.dumps(event, indent=4))
-        game_status = event['status']
-        print(event['summary'])
-        print(statsapi.linescore(event['game_id']))
-
-    return event_today
 
 
 # Main for testing, functions will be called by send_message.py
 def main():
 
-    get_current_game_data('137')
-    # get_current_game_data('121')
+    print(statsapi.linescore(825007)) # (game_id)
+    print(statsapi.game_highlights(825007)) # (game_id)
+    highlight_json = statsapi.game_highlight_data(statsapi.last_game(137))
+    # print(json.dumps(highlight_json, indent=4))
 
 
 # I forget this every effing time
