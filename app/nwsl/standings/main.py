@@ -9,7 +9,7 @@ from pathlib import Path
 # environment
 env_path = Path(__file__).resolve().parent / ".env"
 load_dotenv(dotenv_path=env_path)
-ENDPOINT = 'https://site.api.espn.com/apis/v2/sports/soccer/usa.nwsl/standings'
+ENDPOINT = 'https://site.api.espn.com/apis/site/v2/sports/soccer/usa.nwsl/scoreboard'
 
 
 ###############################################################################
